@@ -1,0 +1,4 @@
+node_modules
+.env
+model-hub-firebase-adminsdk_key.json
+.vercel.json
