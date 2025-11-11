@@ -88,20 +88,6 @@ async function run() {
           }
         })
 
-    //     app.post("/downloads/:id", middleware, async (req, res) => {
-    //   const data = req.body;
-    //   const id = req.params.id;
-    //   const result = await downloadCollection.insertOne(data);
-    //   const filter = { _id: new ObjectId(id) };
-    //   const update = {
-    //     $inc: {
-    //       downloads: 1,
-    //     },
-    //   };
-    //   const downloadCount = await modelsCollection.updateOne(filter, update);
-    //   res.send(result, downloadCount);
-    // });
-
         // post booking data
         app.post('/bookings/:id', async(req,res) =>{
           try {
