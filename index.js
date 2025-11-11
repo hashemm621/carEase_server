@@ -1,13 +1,19 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
+const admin = require("firebase-admin");
+const serviceAccount = require("./travelease-service.json");
 
 // middleware
 app.use(cors());
 app.use(express.json());
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // encode name/password
 const dbName = process.env.DbName;
@@ -46,13 +52,40 @@ async function run() {
           .find({})
           .sort({ createdAt: -1 })
           .toArray();
-          console.log(result);
         res.send(result);
-        console.log(result);
       } catch (error) {
         res.status(500).send({ error: error.message });
       }
     });
+
+    // get latest 6 cars
+    app.get("/latest-cars", async (req, res) => {
+      try {
+        const result = await carsCollection
+          .find({})
+          .sort({ createdAt: -1 })
+          .limit(6)
+          .toArray();
+          console.log(result);
+          res.send(result)
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+          // get car details 
+        app.get('/details-car/:id', async(req,res) =>{
+          try {
+            const {id} = req.params
+          if(!ObjectId.isValid(id)){
+            return res.status(400).send({ error: "Invalid ID format" })
+          }
+          const result = await carsCollection.findOne({_id: new ObjectId(id)})
+          res.send(result)
+          } catch (error) {
+            res.status(500).send({ error: error.message })
+          }
+        })
 
     await client.db("admin").command({ ping: 1 });
     console.log(
