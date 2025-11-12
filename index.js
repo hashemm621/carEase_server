@@ -88,9 +88,6 @@ async function run() {
       }
     });
 
-
-
-
     // add vehicles
     app.post("/all-cars", async (req, res) => {
       try {
@@ -102,8 +99,18 @@ async function run() {
       }
     });
 
-    
+    // delete vehicles
+    app.delete("/all-cars/:id", async (req, res) => {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send({ error: "Invalid ID format" });
+      }
 
+      const result = await carsCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
 
     // my vehicles
     app.get("/my-cars", async (req, res) => {
@@ -124,7 +131,6 @@ async function run() {
       }
     });
 
-   
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
