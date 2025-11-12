@@ -44,7 +44,7 @@ async function run() {
     // created at database
     const db = client.db("carsEase-DB");
     const carsCollection = db.collection("cars");
-    const bookingsCollection = db.collection('bookings')
+    const bookingsCollection = db.collection("bookings");
 
     // get all cars
     app.get("/all-cars", async (req, res) => {
@@ -67,53 +67,49 @@ async function run() {
           .sort({ createdAt: -1 })
           .limit(6)
           .toArray();
-          console.log(result);
-          res.send(result)
+
+        res.send(result);
       } catch (error) {
         res.status(500).send({ error: error.message });
       }
     });
 
-          // get car details 
-        app.get('/details-car/:id', async(req,res) =>{
-          try {
-            const {id} = req.params
-          if(!ObjectId.isValid(id)){
-            return res.status(400).send({ error: "Invalid ID format" })
-          }
-          const result = await carsCollection.findOne({_id: new ObjectId(id)})
-          res.send(result)
-          } catch (error) {
-            res.status(500).send({ error: error.message })
-          }
-        })
+    // get car details
+    app.get("/details-car/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) {
+          return res.status(400).send({ error: "Invalid ID format" });
+        }
+        const result = await carsCollection.findOne({ _id: new ObjectId(id) });
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
 
-    //     app.post("/downloads/:id", middleware, async (req, res) => {
-    //   const data = req.body;
-    //   const id = req.params.id;
-    //   const result = await downloadCollection.insertOne(data);
-    //   const filter = { _id: new ObjectId(id) };
-    //   const update = {
-    //     $inc: {
-    //       downloads: 1,
-    //     },
-    //   };
-    //   const downloadCount = await modelsCollection.updateOne(filter, update);
-    //   res.send(result, downloadCount);
-    // });
+    // add vehicles
+    app.post("/all-cars", async (req, res) => {
+      try {
+        const data = req.body;
+        const result = await carsCollection.insertOne(data);
+        res.send({ success: true, result });
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
 
-        // post booking data
-        app.post('/bookings/:id', async(req,res) =>{
-          try {
-            const data = req.body
-          const id = req.params.id
-          const result = await bookingsCollection.insertOne(data)
-          console.log(data);
-          res.send(result)
-          } catch (error) {
-            res.status(500).send({ error: error.message })
-          }
-        })
+    // post booking data
+    app.post("/bookings/:id", async (req, res) => {
+      try {
+        const data = req.body;
+        const id = req.params.id;
+        const result = await bookingsCollection.insertOne(data);
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
