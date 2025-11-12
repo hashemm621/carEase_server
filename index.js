@@ -39,19 +39,20 @@ app.get("/", (req, res) => {
 async function run() {
   try {
     // connect to the client
-    await client.connect();
+    // await client.connect();
 
     // created at database
     const db = client.db("carsEase-DB");
     const carsCollection = db.collection("cars");
     const bookingsCollection = db.collection("bookings");
 
-    app.get('/all-cars/:id', async(req,res)=>{
-      const {id} = req.params
-    if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" });
-    const result = await carsCollection.findOne({_id: new ObjectId(id)})
-    res.send(result)
-    })
+    app.get("/all-cars/:id", async (req, res) => {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id))
+        return res.status(400).send({ error: "Invalid ID format" });
+      const result = await carsCollection.findOne({ _id: new ObjectId(id) });
+      res.send(result);
+    });
 
     // get all cars
     app.get("/all-cars", async (req, res) => {
@@ -66,20 +67,20 @@ async function run() {
       }
     });
 
+    // update car
+    app.put("/all-cars/:id", async (req, res) => {
+      const { id } = req.params;
+      const data = req.body;
+      if (!ObjectId.isValid(id))
+        return res.status(400).send({ error: "Invalid ID format" });
 
-    // update car 
-    app.put('/all-cars/:id', async(req,res)=>{
-      const {id} = req.params
-      const data = req.body
-      if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" })
-
-        const result = await carsCollection.updateOne(
-          {_id: new ObjectId(id)},
-          {$set: data}
-        )
-        console.log(result);
-        res.send(result)
-    })
+      const result = await carsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: data }
+      );
+      console.log(result);
+      res.send(result);
+    });
 
     // get latest 6 cars
     app.get("/latest-cars", async (req, res) => {
@@ -162,28 +163,28 @@ async function run() {
         .find({ bookingUserEmail: email })
         .toArray();
 
-      
       res.send(result);
     });
-    
 
     // cancel bookings
-    app.delete('/bookings/:id',async(req,res) =>{
-      const {id} = req.params
-      if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" });
+    app.delete("/bookings/:id", async (req, res) => {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id))
+        return res.status(400).send({ error: "Invalid ID format" });
 
       const result = await bookingsCollection.deleteOne({
-        _id: new ObjectId(id)
-      })
+        _id: new ObjectId(id),
+      });
       console.log(result);
-      res.send(result)
-    })
+      res.send(result);
+    });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
+    client.close();
   }
 }
 run().catch(console.dir);

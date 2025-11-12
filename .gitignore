@@ -3,3 +3,4 @@ node_modules
 model-hub-firebase-adminsdk_key.json
 .vercel.json
 travelease-service.json
+.vercel
