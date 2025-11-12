@@ -88,6 +88,9 @@ async function run() {
       }
     });
 
+
+
+
     // add vehicles
     app.post("/all-cars", async (req, res) => {
       try {
@@ -97,6 +100,16 @@ async function run() {
       } catch (error) {
         res.status(500).send({ error: error.message });
       }
+    });
+
+    
+
+
+    // my vehicles
+    app.get("/my-cars", async (req, res) => {
+      const email = req.query.email;
+      const result = await carsCollection.find({ userEmail: email }).toArray();
+      res.send(result);
     });
 
     // post booking data
@@ -111,19 +124,7 @@ async function run() {
       }
     });
 
-        // post booking data
-        app.post('/bookings/:id', async(req,res) =>{
-          try {
-            const data = req.body
-          const id = req.params.id
-          const result = await bookingsCollection.insertOne(data)
-          console.log(data);
-          res.send(result)
-          } catch (error) {
-            res.status(500).send({ error: error.message })
-          }
-        })
-
+   
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
