@@ -88,7 +88,6 @@ async function run() {
       }
     });
 
-<<<<<<< HEAD
     // add vehicles
     app.post("/all-cars", async (req, res) => {
       try {
@@ -111,7 +110,7 @@ async function run() {
         res.status(500).send({ error: error.message });
       }
     });
-=======
+
         // post booking data
         app.post('/bookings/:id', async(req,res) =>{
           try {
@@ -124,7 +123,7 @@ async function run() {
             res.status(500).send({ error: error.message })
           }
         })
->>>>>>> 53473093dcc8cd375a803db028bed33f71fb86e3
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
