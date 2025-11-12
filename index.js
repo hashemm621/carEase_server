@@ -131,6 +131,32 @@ async function run() {
       }
     });
 
+    // my booking cars
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      if (!email) return res.status(400).send({ message: "Email missing" });
+
+      const result = await bookingsCollection
+        .find({ bookingUserEmail: email })
+        .toArray();
+
+      
+      res.send(result);
+    });
+    
+
+    // cancel bookings
+    app.delete('/bookings/:id',async(req,res) =>{
+      const {id} = req.params
+      if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" });
+
+      const result = await bookingsCollection.deleteOne({
+        _id: new ObjectId(id)
+      })
+      console.log(result);
+      res.send(result)
+    })
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
