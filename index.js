@@ -46,6 +46,13 @@ async function run() {
     const carsCollection = db.collection("cars");
     const bookingsCollection = db.collection("bookings");
 
+    app.get('/all-cars/:id', async(req,res)=>{
+      const {id} = req.params
+    if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" });
+    const result = await carsCollection.findOne({_id: new ObjectId(id)})
+    res.send(result)
+    })
+
     // get all cars
     app.get("/all-cars", async (req, res) => {
       try {
@@ -58,6 +65,21 @@ async function run() {
         res.status(500).send({ error: error.message });
       }
     });
+
+
+    // update car 
+    app.put('/all-cars/:id', async(req,res)=>{
+      const {id} = req.params
+      const data = req.body
+      if(!ObjectId.isValid(id)) return res.status(400).send({ error: "Invalid ID format" })
+
+        const result = await carsCollection.updateOne(
+          {_id: new ObjectId(id)},
+          {$set: data}
+        )
+        console.log(result);
+        res.send(result)
+    })
 
     // get latest 6 cars
     app.get("/latest-cars", async (req, res) => {
